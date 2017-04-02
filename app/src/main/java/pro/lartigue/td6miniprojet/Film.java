@@ -1,10 +1,12 @@
 package pro.lartigue.td6miniprojet;
 
-import org.json.JSONArray;
+import android.content.Context;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Date;
 
 /**
  * Created by Dylan on 02/04/2017.
@@ -19,6 +21,41 @@ public class Film {
     private String original_title;
     private String original_language;
     private String title;
+    private String backdrop_path;
+    private double popularity;
+    private int[] genreId;
+    private int vote_count;
+    private double vote_average;
+
+
+    public Film(String film_data) {
+        try {
+            JSONObject film = new JSONObject(film_data);
+            this.poster_path = film.get("poster_path").toString();
+            this.id = (int) film.get("id");
+            this.title = film.getString("title");
+            this.vote_average = (int) film.get("vote_count");
+            this.otherview = film.get("overview").toString();
+            this.vote_count = (int) film.get("vote_count");
+            this.popularity = Double.parseDouble(film.getString("popularity"));
+            this.release_date = film.getString("date");
+            //}
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void affichage_poster(ImageView mImageView, Context c1) {
+        String urlImage = "" + this.poster_path;
+        String urlglobal = "https://image.tmdb.org/t/p/w640/" + urlImage;
+        Picasso.with(c1).load(urlglobal).into(mImageView);
+    }
+
+    public String link_poster() {
+        String urlImage = "" + this.poster_path;
+        String urlglobal = "https://image.tmdb.org/t/p/w640/" + urlImage;
+        return urlglobal;
+    }
 
     public String getPoster_path() {
         return poster_path;
@@ -72,27 +109,5 @@ public class Film {
         return vote_average;
     }
 
-    private String backdrop_path;
-    private double popularity;
-    private int[] genreId;
-    private int vote_count;
-    private double vote_average;
 
-    public Film (String film_data){
-        try {
-
-            JSONObject film = new JSONObject(film_data);
-            this.poster_path = film.get("poster_path").toString();
-            this.id = (int) film.get("id");
-            this.title = film.getString("title");
-            this.vote_average = (int) film.get("vote_count");
-            this.otherview = film.get("overview").toString();
-            this.vote_count = (int) film.get("vote_count");
-            this.popularity=Double.parseDouble(film.getString("popularity"));
-            this.release_date = film.getString("date");
-            //}
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 }

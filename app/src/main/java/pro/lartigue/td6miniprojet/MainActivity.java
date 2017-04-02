@@ -1,8 +1,8 @@
 package pro.lartigue.td6miniprojet;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -11,18 +11,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.content.Context;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
         mButton = (Button) findViewById(R.id.mButton);
         mEdit = (EditText) findViewById(R.id.mEdit);
         mTextView = (TextView) findViewById(R.id.mTextView);
-        mImageView = (ImageView)findViewById(R.id.mImageView);
-        mListView = (ListView) findViewById(R.id.listView);
+        mImageView = (ImageView) findViewById(R.id.mImageView);
+
 
         final RequestQueue queue = Volley.newRequestQueue(this);
-        final Context context =this;
+        final Context context = this;
 
         final Spinner spinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         String film = mEdit.getText().toString().trim();
 
                         final String url = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&query=" + film;
+                        final List<Film> films = new ArrayList<Film>();
 
                         final StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                                 new Response.Listener<String>() {
@@ -74,20 +77,20 @@ public class MainActivity extends AppCompatActivity {
 
                                         try {
 
-
                                             JSONObject obj = new JSONObject(response);
-                                            JSONArray results = (JSONArray)obj.get("results");
+                                            JSONArray results = (JSONArray) obj.get("results");
+                                            for (int i = 0; i < results.length(); i++) {
+                                                JSONObject obj1 = (JSONObject) results.get(i);
+                                                Film film_parcours = new Film(obj1.toString());
+                                                films.add(film_parcours);
+                                                //mTextView.append("Titre : " + film_parcours.getTitle());
+                                                // film_parcours.affichage_poster(mImageView, context);//
+                                            }
 
-                                            //for (int i = 0; i < results.length(); i++) {
 
-                                                JSONObject obj1 = (JSONObject) results.get(1);
-                                                mTextView.append("Titre : "+obj1.get("title")+"\n");
-                                                String urlImage = ""+obj1.get("poster_path");
-                                                String urlglobal="https://image.tmdb.org/t/p/w640/"+urlImage;
-                                                Picasso.with(context).load(urlglobal).into(mImageView);
-
-
-                                            //}
+                                            FilmAdapter adapter = new FilmAdapter(MainActivity.this, films);
+                                            mListView = (ListView) findViewById(R.id.listView);
+                                            mListView.setAdapter(adapter);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
