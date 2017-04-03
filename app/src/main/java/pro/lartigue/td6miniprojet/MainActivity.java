@@ -26,16 +26,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+//
 public class MainActivity extends AppCompatActivity {
 
+    private static final int MOVIE_PAGE_LIMIT = 10;
+    String str = "";
     private Button mButton;
     private EditText mEdit;
     private TextView mTextView;
     private ImageView mImageView;
     private ListView mListView;
-    private static final int MOVIE_PAGE_LIMIT = 10;
     private String API_KEY = "5820fbc35916a7a6163b22166f557130";
-    String str = "";
 
     public MainActivity() throws JSONException {
     }
